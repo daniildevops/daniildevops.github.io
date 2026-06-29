@@ -1,4 +1,4 @@
-name: Deploy static content to Pages
+name: Deploy site
 
 on:
   push:
@@ -6,38 +6,41 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read        # только чтение репо, Pages-права больше не нужны
 
 concurrency:
-  group: 'pages'
+  group: 'deploy'
   cancel-in-progress: true
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build
         run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: Deploy to TimeWeb via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/           # папка после npm run build
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}  # путь на TimeWeb
+          protocol: ftps               # зашифрованный FTP
+          port: 21
+          exclude: |
+            **/.git*
+            **/.git*/**
