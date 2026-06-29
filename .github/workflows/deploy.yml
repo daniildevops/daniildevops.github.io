@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/           # папка после npm run build
           server-dir: ${{ secrets.FTP_SERVER_DIR }}  # путь на TimeWeb
-          protocol: ftps               # зашифрованный FTP
+          protocol: ftp
           port: 21
           exclude: |
             **/.git*
