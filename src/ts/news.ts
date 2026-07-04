@@ -1,6 +1,6 @@
 // news.ts — News page entry point with subscribe form
 import '../styles/main.css'
-import '../styles/components.css'
+
 import { showToast } from './main'
 
 document.addEventListener('DOMContentLoaded', () => {

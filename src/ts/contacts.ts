@@ -1,6 +1,6 @@
 // contacts.ts — Contacts page with form validation
 import '../styles/main.css'
-import '../styles/components.css'
+
 import { showToast } from './main'
 
 document.addEventListener('DOMContentLoaded', () => {

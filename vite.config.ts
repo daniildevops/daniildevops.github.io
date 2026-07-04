@@ -1,11 +1,29 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import fs from 'fs'
+
+function htmlPartials() {
+  return {
+    name: 'html-partials',
+    transformIndexHtml(html: string) {
+      return html.replace(/<include src="([^"]+)"><\/include>/g, (match, src) => {
+        try {
+          return fs.readFileSync(resolve(__dirname, src), 'utf-8')
+        } catch (e) {
+          console.error(`Could not load partial: ${src}`);
+          return match;
+        }
+      })
+    }
+  }
+}
 
 export default defineConfig({
   root: '.',
   base: './',
+  plugins: [htmlPartials()],
   build: {
-    outDir: 'dist',
+    outDir: 'public_html',
     rollupOptions: {
       input: {
         main:        resolve(__dirname, 'index.html'),
